@@ -106,8 +106,8 @@ h1{margin:0;flex:none;font:700 16px/1.2 var(--serif);color:var(--acc);white-spac
 .it.wc::before{content:"🚻"}.it.in::before{content:"➡️"}.it.out::before{content:"⬅️"}
 .it.in{border-color:var(--ok)}.it.out{border-color:var(--out)}
 .it.sel{overflow:visible;border-color:var(--acc);box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 28%,transparent)}
-.it.hit{border-color:var(--acc2);box-shadow:0 0 0 5px color-mix(in srgb,var(--acc2) 40%,transparent);animation:pl 1s infinite alternate}
-@keyframes pl{to{box-shadow:0 0 0 13px color-mix(in srgb,var(--acc2) 8%,transparent)}}
+.it.hit{border-color:var(--acc2);box-shadow:0 0 0 5px color-mix(in srgb,var(--acc2) 45%,transparent),0 0 22px 6px color-mix(in srgb,var(--acc2) 55%,transparent);animation:pl 1s infinite alternate}
+@keyframes pl{to{box-shadow:0 0 0 13px color-mix(in srgb,var(--acc2) 10%,transparent),0 0 40px 14px color-mix(in srgb,var(--acc2) 30%,transparent)}}
 @media(prefers-reduced-motion:reduce){.it.hit{animation:none}}
 .rt{position:absolute;left:50%;top:-44px;margin-left:-14px;width:28px;height:28px;border-radius:50%;background:var(--card);border:2px solid var(--acc);cursor:grab;touch-action:none;display:grid;place-items:center;font-size:14px;color:var(--acc)}
 .rz{position:absolute;right:-14px;bottom:-14px;width:28px;height:28px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:nwse-resize;touch-action:none}
@@ -325,7 +325,7 @@ async function syncLookup(){if(!DB||!EDIT)return;if(lkRun){lkAgain=true;return}l
   LK=want}while(lkAgain)}finally{lkRun=false}}
 async function gfind(){const v=document.getElementById('gq').value.trim(),m=document.getElementById('gm');if(!v)return;m.textContent='กำลังค้นหา…';
  try{const d=await DB.collection('lookup').doc(await sha(key(v))).get();const it=d.exists&&S.items.find(i=>i.id===d.data().tb);
-  if(it){HL=it.id;render();m.innerHTML=`โต๊ะของคุณ: <b>${esc(it.n)}</b>`;document.getElementById('gq').blur();focusOn(it,Math.max(K,.9))}
+  if(it){HL=it.id;render();m.innerHTML=`โต๊ะของคุณ: <b>${esc(it.n)}</b>`;document.getElementById('gq').blur();reveal(it)}
   else{HL=null;render();m.textContent='ไม่พบชื่อนี้ ลองพิมพ์ชื่อ-นามสกุลให้ตรงกับบัตรเชิญ หรือสอบถามทีมต้อนรับ'}}
  catch(e){m.textContent='ค้นหาไม่สำเร็จ ลองใหม่อีกครั้ง'}}
 const lg=document.getElementById('lg');
