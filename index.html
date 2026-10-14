@@ -201,7 +201,7 @@ details.adj[open] summary::after{transform:rotate(180deg)}
 <div class="row" style="justify-content:flex-end"><button onclick="closeImp()">ปิด</button><button class="p" onclick="doImport()">นำเข้า</button></div></div></div>
 <script>
 // ===== ตั้งค่า Firebase (ดูวิธีใน SETUP-TH.md) =====
-const FB_CONFIG={apiKey:"วางค่า apiKey ตรงนี้",authDomain:"wedding-project-4321a.firebaseapp.com",projectId:"wedding-project-4321a",appId:"วางค่า appId ตรงนี้"};
+const FB_CONFIG={apiKey:"AIzaSyBJlpK6M2ktBDCj1AQnRjnzxXlSCUv304",authDomain:"wedding-project-4321a.firebaseapp.com",projectId:"wedding-project-4321a",appId:"1:18449478862:web:a766d662a0921daa54cc9f"};
 const ADMIN_EMAIL="admin@wedding-seating.app",STAFF_EMAIL="staff@wedding-seating.app";
 const L={room:'ห้อง',tb:'โต๊ะ',stage:'เวที',wc:'ห้องน้ำ 🚻',in:'ทางเข้า ➡️',out:'ทางออก ⬅️'};
 let S={items:[{id:1,t:'stage',x:400,y:30,n:'เวที'},{id:2,t:'in',x:30,y:620,n:'ทางเข้า'},{id:3,t:'out',x:980,y:620,n:'ทางออก'},{id:4,t:'wc',x:980,y:30,n:'ห้องน้ำ'},
@@ -332,8 +332,16 @@ const lg=document.getElementById('lg');
 function openLg(){lg.style.display='flex';document.getElementById('lp').focus()}
 function closeLg(){lg.style.display='none'}
 async function login(){const pw=document.getElementById('lp').value,m=document.getElementById('lgm');if(!pw)return;m.textContent='กำลังตรวจสอบ…';
- for(const em of[ADMIN_EMAIL,STAFF_EMAIL]){try{await firebase.auth().signInWithEmailAndPassword(em,pw);location.reload();return}catch(e){}}
- m.textContent='รหัสไม่ถูกต้อง'}
+ if(!DB){m.textContent='ยังไม่ได้เชื่อมต่อ Firebase (ตรวจ apiKey / appId ในไฟล์)';return}
+ let bad=null;
+ for(const em of[ADMIN_EMAIL,STAFF_EMAIL]){try{await firebase.auth().signInWithEmailAndPassword(em,pw);location.reload();return}catch(e){const c=(e&&e.code)||String(e);if(!/invalid-credential|wrong-password|user-not-found|invalid-login/.test(c))bad=c}}
+ if(!bad){m.textContent='รหัสไม่ถูกต้อง';return}
+ m.textContent=/unauthorized-domain/.test(bad)?'โดเมนนี้ยังไม่ได้รับอนุญาตใน Firebase (Authentication → Settings → Authorized domains)'
+  :/api-key/.test(bad)?'apiKey ไม่ถูกต้อง ตรวจค่า FB_CONFIG ในไฟล์'
+  :/operation-not-allowed/.test(bad)?'ยังไม่ได้เปิด Email/Password ใน Firebase (Authentication → Sign-in method)'
+  :/network/.test(bad)?'เชื่อมต่ออินเทอร์เน็ตไม่ได้'
+  :/too-many/.test(bad)?'ลองหลายครั้งเกินไป รอสักครู่แล้วลองใหม่'
+  :'เข้าสู่ระบบไม่สำเร็จ ('+bad+')'}
 function logout(){firebase.auth().signOut().then(()=>location.reload())}
 function dl(t,type,name){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000)}
 function backup(){dl(JSON.stringify({v:1,items:S.items,guests:S.guests.filter(g=>!g.w).map(g=>({id:g.id,n:g.n,tb:g.tb||null}))},null,1),'application/json','wedding-backup-'+new Date().toISOString().slice(0,10)+'.json')}
