@@ -89,19 +89,19 @@ h1{margin:0;flex:none;font:700 16px/1.2 var(--serif);color:var(--acc);white-spac
 .zp{font-size:12px;color:var(--mut);background:color-mix(in srgb,var(--card) 88%,transparent);border-radius:10px;padding:0 6px}
 
 /* canvas items */
-.it{position:absolute;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:14px;line-height:1.2;user-select:none;-webkit-user-select:none;touch-action:none;cursor:grab;border:2px solid var(--line);background:var(--card);box-shadow:0 1px 3px rgba(43,32,36,.12)}
+.it{position:absolute;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:var(--fs,14px);line-height:1.2;user-select:none;-webkit-user-select:none;touch-action:none;cursor:grab;border:2px solid var(--line);background:var(--card);box-shadow:0 1px 3px rgba(43,32,36,.12)}
 .it:active{cursor:grabbing}
 .it.tb{border-radius:50%;overflow:hidden;padding:4px;border-color:color-mix(in srgb,var(--ink) 20%,var(--line))}
 .tl{display:flex;flex-direction:column;align-items:center;gap:2px;max-width:100%;pointer-events:none}
-.tl b{font-size:15px;font-weight:700;overflow-wrap:anywhere}
-.guest .tl b{font-size:16px}
-.tl .ct{font-size:12px;color:var(--mut)}
+.tl b{font-size:var(--fs,15px);font-weight:700;overflow-wrap:anywhere}
+.guest .tl b{font-size:var(--fs,16px)}
+.tl .ct{font-size:calc(var(--fs,15px)*.8);color:var(--mut)}
 .pb{display:block;width:34px;height:4px;border-radius:2px;background:var(--line);overflow:hidden}
 .pb i{display:block;height:100%;background:var(--ok)}
 .it.tb.full{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 13%,var(--card))}
 .it.tb.full .ct{color:var(--ok);font-weight:700}
-.it.room{z-index:0;background:transparent;border:3px dashed var(--acc);border-radius:18px;align-items:flex-start;justify-content:flex-start;padding:8px 14px;font:700 16px/1.3 var(--serif);color:var(--acc);box-shadow:none}
-.it.stage{border-color:transparent;border-radius:12px 12px 32px 32px;background:linear-gradient(160deg,var(--acc),color-mix(in srgb,var(--acc) 70%,#000));color:var(--onacc);font:600 16px/1.2 var(--serif);box-shadow:0 6px 16px color-mix(in srgb,var(--acc) 35%,transparent)}
+.it.room{z-index:0;background:transparent;border:3px dashed var(--acc);border-radius:18px;align-items:flex-start;justify-content:flex-start;padding:8px 14px;font:700 var(--fs,16px)/1.3 var(--serif);color:var(--acc);box-shadow:none}
+.it.stage{border-color:transparent;border-radius:12px 12px 32px 32px;background:linear-gradient(160deg,var(--acc),color-mix(in srgb,var(--acc) 70%,#000));color:var(--onacc);font:600 var(--fs,16px)/1.2 var(--serif);box-shadow:0 6px 16px color-mix(in srgb,var(--acc) 35%,transparent)}
 .it.wc,.it.in,.it.out{border-radius:12px;flex-direction:row;gap:5px;font-weight:500}
 .it.wc::before{content:"🚻"}.it.in::before{content:"➡️"}.it.out::before{content:"⬅️"}
 .it.in{border-color:var(--ok)}.it.out{border-color:var(--out)}
@@ -230,7 +230,7 @@ function render(){
  cv.innerHTML='';const hs=new Set(Q?S.guests.filter(g=>g.n.toLowerCase().includes(Q)).map(g=>g.tb):[]);
  S.items.forEach(it=>{
   const d=document.createElement('div');d.className='it '+it.t+(it.id===sel?' sel':'');
-  d.style.left=it.x+'px';d.style.top=it.y+'px';d.style.width=it.w+'px';d.style.height=it.h+'px';d.style.transform=it.r?`rotate(${it.r}deg)`:'';d.dataset.id=it.id;
+  d.style.left=it.x+'px';d.style.top=it.y+'px';d.style.width=it.w+'px';d.style.height=it.h+'px';d.style.transform=it.r?`rotate(${it.r}deg)`:'';d.dataset.id=it.id;if(+it.fs>=8&&+it.fs<=120)d.style.setProperty('--fs',(+it.fs)+'px');
   if(it.t==='tb'){const g=S.guests.filter(x=>x.tb===it.id),k=g.filter(x=>x.in).length;
    if(g.length&&k===g.length)d.classList.add('full');if(hs.has(it.id)||it.id===HL)d.classList.add('hit');
    d.innerHTML=`<div class="tl" style="transform:rotate(${-(it.r||0)}deg)"><b>${esc(it.n)}</b>${ROLE==='guest'?'':`<span class="ct">${k}/${g.length} คน</span><i class="pb"><i style="width:${g.length?Math.round(k/g.length*100):0}%"></i></i>`}</div>`}
@@ -274,7 +274,7 @@ function freeSpot(){for(let y=120;y<CH-120;y+=160)for(let x=120;x<CW-120;x+=160)
 function doImport(){const rows=parse(ta.value);if(!rows.length){im.textContent='ยังไม่มีรายชื่อให้นำเข้า';return}
  let made=0,none=0,added=0;const skip=[];
  rows.forEach(([n,t])=>{if(S.guests.some(g=>nz(g.n)===nz(n))){skip.push(n);return}added++;let id=null;if(t){let m=S.items.find(i=>i.t==='tb'&&[nz(t),nz('โต๊ะ'+t),nz('table'+t)].includes(nz(i.n)));
-  if(!m){const[x,y]=freeSpot();m={id:nid(),t:'tb',x,y,w:80,h:80,n:/^\d+$/.test(t)?'โต๊ะ '+t:t};S.items.push(m);made++}id=m.id}else none++;
+  if(!m){const[x,y]=freeSpot();m={id:nid(),t:'tb',x,y,w:80,h:80,...inh('tb'),n:/^\d+$/.test(t)?'โต๊ะ '+t:t};S.items.push(m);made++}id=m.id}else none++;
   S.guests.push({id:nid(),n,tb:id,in:false})});
  ta.value='';im.textContent=`นำเข้า ${added} คนแล้ว · สร้างโต๊ะใหม่ ${made} โต๊ะ · ยังไม่มีโต๊ะ ${none} คน`+(skip.length?` · ข้ามชื่อซ้ำ ${skip.length} คน: ${skip.slice(0,5).join(', ')}${skip.length>5?' …':''}`:'');render();if(made)fitContent()}
 function rz(z,it,d){z.onpointerdown=e=>{busy=true;e.stopPropagation();z.setPointerCapture(e.pointerId);const sx=e.clientX,sy=e.clientY,w0=it.w,h0=it.h,a=(it.r||0)*Math.PI/180,lx=e=>((e.clientX-sx)*Math.cos(a)+(e.clientY-sy)*Math.sin(a))/K,ly=e=>(-(e.clientX-sx)*Math.sin(a)+(e.clientY-sy)*Math.cos(a))/K;
@@ -286,7 +286,7 @@ function rt(t,it,d){t.onpointerdown=e=>{busy=true;e.stopPropagation();t.setPoint
 function rot(d){const it=S.items.find(i=>i.id===sel);it.r=(((it.r||0)+d)%360+360)%360;render()}
 function sz(dw,dh){const it=S.items.find(i=>i.id===sel);it.w=Math.max(G,Math.min(CW-it.x,it.w+dw*G));it.h=Math.max(G,Math.min(CH-it.y,it.h+dh*G));render()}
 function add(t){const n=S.items.filter(i=>i.t===t).length+1;
- S.items.push({id:nid(),t,x:sn(wrap.scrollLeft/K+80+Math.random()*120),y:sn(wrap.scrollTop/K+80+Math.random()*120),w:DEF[t][0],h:DEF[t][1],n:t==='tb'?'โต๊ะ '+n:L[t].split(' ')[0]});sel=S.items[S.items.length-1].id;render()}
+ S.items.push({id:nid(),t,x:sn(wrap.scrollLeft/K+80+Math.random()*120),y:sn(wrap.scrollTop/K+80+Math.random()*120),w:DEF[t][0],h:DEF[t][1],...inh(t),n:t==='tb'?'โต๊ะ '+n:L[t].split(' ')[0]});sel=S.items[S.items.length-1].id;render()}
 function panel(){
  if(ROLE==='guest'){P.className='';return}
  const ph=t=>`<div class="ph"><h2>${t}</h2><button class="ib" onclick="sel=null;render()" aria-label="ปิด">✕</button></div>`;
@@ -302,6 +302,7 @@ function panel(){
  if(ed){
   const a=`<div class="row"><span class="mut" style="flex:1">กว้าง</span><button onclick="sz(-1,0)" aria-label="ลดความกว้าง">−</button><button onclick="sz(1,0)" aria-label="เพิ่มความกว้าง">+</button><span class="mut" style="flex:1;text-align:right">สูง</span><button onclick="sz(0,-1)" aria-label="ลดความสูง">−</button><button onclick="sz(0,1)" aria-label="เพิ่มความสูง">+</button></div>`
   +`<div class="row"><span class="mut" style="flex:1">หมุน (${it.r||0}°)</span><button onclick="rot(-15)">↺ 15°</button><button onclick="rot(15)">↻ 15°</button><button onclick="rot(90)">90°</button></div>`
+  +`<div class="row"><span class="mut" style="flex:1">ตัวอักษร (${fsOf(it)}px)</span><button onclick="fsz(-2)" aria-label="ลดขนาดตัวอักษร">A−</button><button onclick="fsz(2)" aria-label="เพิ่มขนาดตัวอักษร">A+</button><button onclick="fsz(0)">รีเซ็ต</button></div><div class="row"><button onclick="fsAll()" style="flex:1">ใช้ขนาดนี้กับ${esc(L[it.t].split(' ')[0])}ทุกชิ้น</button></div>`
   +`<div class="row"><span class="mut" style="flex:1">สี</span>${PAL.map(c=>`<button class="sw" style="background:${c}" onclick="setc('${c}')" aria-label="สี ${c}"></button>`).join('')}<input type="color" value="${/^#[0-9a-f]{6}$/i.test(it.c||'')?it.c:'#e8789a'}" onchange="setc(this.value)" title="เลือกสีเอง" aria-label="เลือกสีเอง"><button onclick="setc('')">รีเซ็ต</button></div>`
   +`<p class="mut" style="margin:4px 0 8px">แตะเลือกบนผัง แล้วลากเพื่อย้ายตำแหน่ง</p>`;
   h+=isT?`<details class="adj" ${ADJ?'open':''} ontoggle="ADJ=this.open"><summary>ปรับขนาด หมุน และสี</summary>${a}</details>`:a;
@@ -310,6 +311,10 @@ function panel(){
 function ren(v){S.items.find(i=>i.id===sel).n=v||'-';render()}
 function ck(id){const g=S.guests.find(x=>x.id===id);g.in=!g.in;render();
  if(DB){const d=C.doc(String(id));(g.in?d.set({t:Date.now()}):d.delete()).catch(()=>{g.in=!g.in;render();toast('เช็คอินไม่สำเร็จ — ตรวจสอบว่าเข้าสู่ระบบทีมงานแล้ว และต่อเน็ตอยู่')})}}
+const FS0={tb:15,stage:16,room:16,wc:14,in:14,out:14},fsOf=it=>it.fs||FS0[it.t]||14;
+const inh=t=>{const s=S.items.find(i=>i.t===t&&i.fs);return s?{fs:s.fs}:{}};
+function fsz(d){const it=S.items.find(i=>i.id===sel);if(!d)delete it.fs;else it.fs=Math.max(8,Math.min(120,fsOf(it)+d));render()}
+function fsAll(){const it=S.items.find(i=>i.id===sel);S.items.forEach(o=>{if(o.t===it.t){if(it.fs)o.fs=it.fs;else delete o.fs}});render();toast('ปรับตัวอักษรของ'+L[it.t].split(' ')[0]+'ทุกชิ้นแล้ว')}
 function setc(c){const it=S.items.find(i=>i.id===sel);if(c)it.c=c;else delete it.c;render()}
 function rm(id){const g=S.guests.find(x=>x.id===id);S.guests=S.guests.filter(x=>x.id!==id);if(DB){C.doc(String(id)).delete().catch(()=>0);if(g&&g.w)DB.collection('walkins').doc(String(id)).delete().catch(()=>0)}render()}
 function walkin(n){const id=nid(),tb=sel;S.guests.push({id,n,tb,in:true,w:true});
