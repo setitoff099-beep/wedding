@@ -256,7 +256,7 @@ function res(){const R=document.getElementById('res');if(!Q){R.style.display='no
  const m=S.guests.filter(g=>g.n.toLowerCase().includes(Q)).slice(0,30);R.style.display='block';
  R.innerHTML=m.map(g=>{const t=S.items.find(i=>i.id===g.tb);return `<div class="ri" onclick="goTo(${g.id})"><div><b>${esc(g.n)}</b><br><span class="mut">${t?esc(t.n):'ยังไม่มีโต๊ะ'}</span></div><button onclick="event.stopPropagation();ck(${g.id})">${g.in?'✓ มาแล้ว':'เช็คอิน'}</button></div>`}).join('')||'<div class="ri mut">ไม่พบชื่อนี้ — กดที่โต๊ะแล้วเพิ่มแขก walk-in ได้</div>'}
 function goTo(id){const g=S.guests.find(x=>x.id===id),it=g&&S.items.find(i=>i.id===g.tb);Q='';document.getElementById('q').value='';
- if(!it){sel='un';render();return}sel=it.id;render();wrap.scrollLeft=(it.x+it.w/2)*K-wrap.clientWidth/2;wrap.scrollTop=(it.y+it.h/2)*K-wrap.clientHeight/2}
+ if(!it){sel='un';render();return}sel=it.id;render();wrap.scrollLeft=((it.x+it.w/2)*K+OFX)-wrap.clientWidth/2;wrap.scrollTop=((it.y+it.h/2)*K+OFY)-wrap.clientHeight/2}
 const nz=x=>String(x).toLowerCase().replace(/\s+/g,'');
 function sp(l){if(l.includes('\t'))return l.split('\t');const o=[];let c='',q=false;for(const ch of l){if(ch==='"')q=!q;else if((ch===','||ch===';')&&!q){o.push(c);c=''}else c+=ch}o.push(c);return o}
 function parse(t){const rows=t.replace(/^\uFEFF/,'').split(/\r?\n/).map(l=>sp(l).map(x=>String(x).trim())).filter(r=>r[0]);
@@ -286,7 +286,7 @@ function rt(t,it,d){t.onpointerdown=e=>{busy=true;e.stopPropagation();t.setPoint
 function rot(d){const it=S.items.find(i=>i.id===sel);it.r=(((it.r||0)+d)%360+360)%360;render()}
 function sz(dw,dh){const it=S.items.find(i=>i.id===sel);it.w=Math.max(G,Math.min(CW-it.x,it.w+dw*G));it.h=Math.max(G,Math.min(CH-it.y,it.h+dh*G));render()}
 function add(t){const n=S.items.filter(i=>i.t===t).length+1;
- S.items.push({id:nid(),t,x:sn(wrap.scrollLeft/K+80+Math.random()*120),y:sn(wrap.scrollTop/K+80+Math.random()*120),w:DEF[t][0],h:DEF[t][1],...inh(t),n:t==='tb'?'โต๊ะ '+n:L[t].split(' ')[0]});sel=S.items[S.items.length-1].id;render()}
+ S.items.push({id:nid(),t,x:sn(Math.max(0,(wrap.scrollLeft-OFX)/K)+80+Math.random()*120),y:sn(Math.max(0,(wrap.scrollTop-OFY)/K)+80+Math.random()*120),w:DEF[t][0],h:DEF[t][1],...inh(t),n:t==='tb'?'โต๊ะ '+n:L[t].split(' ')[0]});sel=S.items[S.items.length-1].id;render()}
 function panel(){
  if(ROLE==='guest'){P.className='';return}
  const ph=t=>`<div class="ph"><h2>${t}</h2><button class="ib" onclick="sel=null;render()" aria-label="ปิด">✕</button></div>`;
@@ -360,25 +360,28 @@ function toggleLock(){LOCK=!LOCK;try{localStorage.setItem('wedLock',LOCK?'1':'0'
 function ag(){const v=document.getElementById('gn').value,dup=[];v.split(/[,،\n]/).map(s=>s.trim()).filter(Boolean).forEach(n=>{const o=S.guests.find(g=>nz(g.n)===nz(n));if(o){const t=S.items.find(i=>i.id===o.tb);dup.push(`${n} (อยู่${t?t.n:'รายการยังไม่มีโต๊ะ'})`)}else if(EDIT||!DB)S.guests.push({id:nid(),n,tb:sel,in:false});else walkin(n)});
  if(dup.length)toast('ชื่อซ้ำ ไม่ได้เพิ่ม: '+dup.join(', '));render();document.getElementById('gn').focus()}
 function del(){if(!confirm('ลบรายการนี้?'))return;if(DB)S.guests.filter(g=>g.w&&g.tb===sel).forEach(g=>DB.collection('walkins').doc(String(g.id)).delete().catch(()=>0));S.items=S.items.filter(i=>i.id!==sel);S.guests=S.guests.filter(g=>g.tb!==sel);sel=null;render()}
-let K=1;const wrap=document.getElementById('wrap'),sz_=document.getElementById('sz');
-function apply(){cv.style.transform=`scale(${K})`;sz_.style.width=CW*K+'px';sz_.style.height=CH*K+'px';document.getElementById('zl').textContent=Math.round(K*100)+'%'}
-function zoom(f){const cx=(wrap.scrollLeft+wrap.clientWidth/2)/K,cy=(wrap.scrollTop+wrap.clientHeight/2)/K;K=Math.max(.2,Math.min(2.5,K*f));apply();wrap.scrollLeft=cx*K-wrap.clientWidth/2;wrap.scrollTop=cy*K-wrap.clientHeight/2}
-function fitContent(){const I=S.items;if(!I.length){K=1;apply();return}const bx=Math.max(0,Math.min(...I.map(i=>i.x))-40),by=Math.max(0,Math.min(...I.map(i=>i.y))-40),bw=Math.max(...I.map(i=>i.x+i.w))+40-bx,bh=Math.max(...I.map(i=>i.y+i.h))+40-by;
- K=Math.max(.2,Math.min(wrap.clientWidth/bw,wrap.clientHeight/bh,1.5));apply();wrap.scrollLeft=bx*K-(wrap.clientWidth-bw*K)/2;wrap.scrollTop=by*K-(wrap.clientHeight-bh*K)/2}
+let K=1,OFX=0,OFY=0;const wrap=document.getElementById('wrap'),sz_=document.getElementById('sz');
+function bbox(){const I=S.items;if(!I.length)return null;const bx=Math.max(0,Math.min(...I.map(i=>i.x))-40),by=Math.max(0,Math.min(...I.map(i=>i.y))-40);return{bx,by,bw:Math.max(...I.map(i=>i.x+i.w))+40-bx,bh:Math.max(...I.map(i=>i.y+i.h))+40-by}}
+function apply(){const b=bbox();OFX=b?Math.max(0,wrap.clientWidth/2-(b.bx+b.bw/2)*K):0;OFY=b?Math.max(0,wrap.clientHeight/2-(b.by+b.bh/2)*K):0;
+ cv.style.left=OFX+'px';cv.style.top=OFY+'px';cv.style.transform=`scale(${K})`;sz_.style.width=(CW*K+OFX)+'px';sz_.style.height=(CH*K+OFY)+'px';document.getElementById('zl').textContent=Math.round(K*100)+'%'}
+function zoom(f){const cx=(wrap.scrollLeft+wrap.clientWidth/2-OFX)/K,cy=(wrap.scrollTop+wrap.clientHeight/2-OFY)/K;K=Math.max(.2,Math.min(2.5,K*f));apply();wrap.scrollLeft=cx*K+OFX-wrap.clientWidth/2;wrap.scrollTop=cy*K+OFY-wrap.clientHeight/2}
+function fitContent(){const b=bbox();if(!b){K=1;apply();return}
+ K=Math.max(.2,Math.min(wrap.clientWidth/b.bw,wrap.clientHeight/b.bh,1.5));apply();
+ wrap.scrollLeft=b.bx*K+OFX-(wrap.clientWidth-b.bw*K)/2;wrap.scrollTop=b.by*K+OFY-(wrap.clientHeight-b.bh*K)/2}
 wrap.addEventListener('wheel',e=>{if(e.ctrlKey){e.preventDefault();zoom(e.deltaY<0?1.1:1/1.1)}},{passive:false});
 cv.addEventListener('pointerdown',e=>{if(e.target!==cv)return;let sx=e.clientX,sy=e.clientY,l=wrap.scrollLeft,t=wrap.scrollTop,rb=false,mv=false;cv.setPointerCapture(e.pointerId);
  cv.onpointermove=e=>{if(PINCH){rb=true;mv=true;return}if(rb){sx=e.clientX;sy=e.clientY;l=wrap.scrollLeft;t=wrap.scrollTop;rb=false}if(Math.hypot(e.clientX-sx,e.clientY-sy)>4)mv=true;wrap.scrollLeft=l-(e.clientX-sx);wrap.scrollTop=t-(e.clientY-sy)};
  cv.onpointerup=cv.onpointercancel=()=>{cv.onpointermove=cv.onpointerup=cv.onpointercancel=null;if(!mv&&sel&&Date.now()-PZ>400){sel=null;render()}}});
 // pinch to zoom (two fingers)
-function zoomAt(nk,cx,cy,pcx,pcy){const r=wrap.getBoundingClientRect(),ux=(wrap.scrollLeft+pcx-r.left)/K,uy=(wrap.scrollTop+pcy-r.top)/K;K=Math.max(.2,Math.min(2.5,nk));apply();wrap.scrollLeft=ux*K-(cx-r.left);wrap.scrollTop=uy*K-(cy-r.top)}
+function zoomAt(nk,cx,cy,pcx,pcy){const r=wrap.getBoundingClientRect(),ux=(wrap.scrollLeft+pcx-r.left-OFX)/K,uy=(wrap.scrollTop+pcy-r.top-OFY)/K;K=Math.max(.2,Math.min(2.5,nk));apply();wrap.scrollLeft=ux*K+OFX-(cx-r.left);wrap.scrollTop=uy*K+OFY-(cy-r.top)}
 const td=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY),tc=t=>[(t[0].clientX+t[1].clientX)/2,(t[0].clientY+t[1].clientY)/2];
 wrap.addEventListener('touchstart',e=>{if(e.touches.length===2){e.preventDefault();const[x,y]=tc(e.touches);PINCH={d:td(e.touches)||1,k:K,x,y};PZ=Date.now()}},{passive:false});
 wrap.addEventListener('touchmove',e=>{if(!PINCH||e.touches.length!==2)return;e.preventDefault();const[x,y]=tc(e.touches);zoomAt(PINCH.k*td(e.touches)/PINCH.d,x,y,PINCH.x,PINCH.y);PINCH.x=x;PINCH.y=y;PZ=Date.now()},{passive:false});
 const pend=e=>{if(e.touches.length<2){PINCH=null;PZ=Date.now()}};
 wrap.addEventListener('touchend',pend);wrap.addEventListener('touchcancel',pend);
 // focus helpers
-function focusOn(it,k){K=Math.max(.2,Math.min(2.5,k));apply();wrap.scrollLeft=(it.x+it.w/2)*K-wrap.clientWidth/2;wrap.scrollTop=(it.y+it.h/2)*K-wrap.clientHeight/2}
-function reveal(it){const cx=(it.x+it.w/2)*K-wrap.scrollLeft,cy=(it.y+it.h/2)*K-wrap.scrollTop;if(cx<40||cy<40||cx>wrap.clientWidth-40||cy>wrap.clientHeight-40){wrap.scrollLeft=(it.x+it.w/2)*K-wrap.clientWidth/2;wrap.scrollTop=(it.y+it.h/2)*K-wrap.clientHeight/2}}
+function focusOn(it,k){K=Math.max(.2,Math.min(2.5,k));apply();wrap.scrollLeft=((it.x+it.w/2)*K+OFX)-wrap.clientWidth/2;wrap.scrollTop=((it.y+it.h/2)*K+OFY)-wrap.clientHeight/2}
+function reveal(it){const cx=((it.x+it.w/2)*K+OFX)-wrap.scrollLeft,cy=((it.y+it.h/2)*K+OFY)-wrap.scrollTop;if(cx<40||cy<40||cx>wrap.clientWidth-40||cy>wrap.clientHeight-40){wrap.scrollLeft=((it.x+it.w/2)*K+OFX)-wrap.clientWidth/2;wrap.scrollTop=((it.y+it.h/2)*K+OFY)-wrap.clientHeight/2}}
 // menu + keyboard
 const MN=document.getElementById('menu'),MB=document.getElementById('mb');
 function closeMenu(){MN.classList.remove('open');MB.setAttribute('aria-expanded','false')}
