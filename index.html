@@ -208,16 +208,17 @@ let S={items:[{id:1,t:'stage',x:400,y:30,n:'เวที'},{id:2,t:'in',x:30,y:6
 {id:5,t:'tb',x:300,y:200,n:'โต๊ะ 1'},{id:6,t:'tb',x:520,y:200,n:'โต๊ะ 2'},{id:7,t:'tb',x:740,y:200,n:'โต๊ะ 3'}],guests:[],next:20};
 try{const r=localStorage.getItem('wed');if(r)S=JSON.parse(r)}catch(e){}
 const CW=2400,CH=1600,PAL=['#e8789a','#f0a04b','#e6cc3c','#5bb56f','#4aa3d6','#8b7be0','#9aa0a6','#ffffff'];
-let LOCK=false,ROLE='admin',HL=null,DB=null,C=null,EDIT=true,busy=false,tm=0,pushing=false,lastL='',lastG='',CK=new Set();
+let LOCK=false,ROLE='admin',NAMES={},MYK='',lastN='',HL=null,DB=null,C=null,EDIT=true,busy=false,tm=0,pushing=false,lastL='',lastG='',CK=new Set();
 const nid=(()=>{let c=0;return()=>Date.now()*1000+(c++%1000)})();
 const canon=o=>JSON.stringify(o,(k,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.entries(v).sort()):v);
 const gP=()=>({list:S.guests.filter(g=>!g.w).map(g=>({id:g.id,n:g.n,tb:g.tb||null}))}),clone=o=>JSON.parse(JSON.stringify(o)),rr=()=>{if(!busy)render()};
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',5000)}
 function stat(){document.getElementById('st').textContent=DB?(ROLE==='admin'?'🟢 ผู้ดูแล · ซิงค์ทุกเครื่อง':'🟢 ทีมต้อนรับ'):'⚪ ใช้ในเครื่องนี้'}
 function norm(){S.items.forEach(i=>{const d=DEF[i.t]||[80,80];i.w=i.w||d[0];i.h=i.h||d[1]})}
-function sync(){if(!DB){save();return}if(!EDIT)return;if(canon({items:S.items})!==lastL||canon(gP())!==lastG){clearTimeout(tm);tm=setTimeout(push,400)}}
-async function push(){if(pushing){tm=setTimeout(push,300);return}tm=0;pushing=true;const a=canon({items:S.items}),b=canon(gP());
- try{if(a!==lastL){await DB.doc('layout/main').set({items:clone(S.items)});lastL=a}if(b!==lastG){await DB.doc('guests/main').set(gP());lastG=b;syncLookup().catch(()=>toast('อัปเดตตัวค้นหาของแขกไม่สำเร็จ'))}}catch(e){toast('บันทึกขึ้นระบบไม่สำเร็จ ('+(e.code||'error')+')')}pushing=false}
+function sync(){if(!DB){save();return}if(!EDIT)return;if(canon({items:S.items})!==lastL||canon(gP())!==lastG||canon(nm())!==lastN){clearTimeout(tm);tm=setTimeout(push,400)}}
+function nm(){const m={};S.guests.forEach(g=>{if(g.w||!g.tb)return;(m[g.tb]=m[g.tb]||[]).push(g.n)});Object.values(m).forEach(a=>a.sort((x,y)=>x.localeCompare(y,'th')));return m}
+async function push(){if(pushing){tm=setTimeout(push,300);return}tm=0;pushing=true;const a=canon({items:S.items}),b=canon(gP()),n=canon(nm());
+ try{if(a!==lastL){await DB.doc('layout/main').set({items:clone(S.items)},{merge:true});lastL=a}if(b!==lastG){await DB.doc('guests/main').set(gP());lastG=b;syncLookup().catch(()=>toast('อัปเดตตัวค้นหาของแขกไม่สำเร็จ'))}if(n!==lastN){await DB.doc('layout/main').set({names:nm()},{merge:true});lastN=n}}catch(e){toast('บันทึกขึ้นระบบไม่สำเร็จ ('+(e.code||'error')+')')}pushing=false}
 function applyRemote(k,d){if(busy||tm||pushing)return;
  if(k==='L'){const a=canon({items:d.items||[]});if(a===lastL)return;S.items=clone(d.items||[]);norm();lastL=a}
  else{const b=canon({list:d.list||[]});if(b===lastG)return;S.guests=clone(d.list||[]).map(g=>({...g,in:CK.has(String(g.id))})).concat(S.guests.filter(g=>g.w));lastG=canon(gP())}}
@@ -288,8 +289,10 @@ function sz(dw,dh){const it=S.items.find(i=>i.id===sel);it.w=Math.max(G,Math.min
 function add(t){const n=S.items.filter(i=>i.t===t).length+1;
  S.items.push({id:nid(),t,x:sn(Math.max(0,(wrap.scrollLeft-OFX)/K)+80+Math.random()*120),y:sn(Math.max(0,(wrap.scrollTop-OFY)/K)+80+Math.random()*120),w:DEF[t][0],h:DEF[t][1],...inh(t),n:t==='tb'?'โต๊ะ '+n:L[t].split(' ')[0]});sel=S.items[S.items.length-1].id;render()}
 function panel(){
- if(ROLE==='guest'){P.className='';return}
  const ph=t=>`<div class="ph"><h2>${t}</h2><button class="ib" onclick="sel=null;render()" aria-label="ปิด">✕</button></div>`;
+ if(ROLE==='guest'){const t=S.items.find(i=>i.id===sel);if(!t||t.t!=='tb'){P.className='';return}
+  const a=NAMES[t.id]||[];P.className='open';
+  P.innerHTML=ph(esc(t.n))+`<p class="mut" style="margin:0 0 6px">แขกที่นั่งโต๊ะนี้ ${a.length} คน</p>`+(a.map(x=>{const me=MYK&&key(x)===MYK;return `<div class="g"><span${me?' style="color:var(--acc);font-weight:700"':''}>${esc(x)}${me?' (คุณ)':''}</span></div>`}).join('')||'<p class="mut">ยังไม่มีรายชื่อที่โต๊ะนี้</p>');return}
  if(sel==='un'){const u=S.guests.filter(g=>!g.tb),T=S.items.filter(i=>i.t==='tb');P.className='open';
   P.innerHTML=ph(`แขกที่ยังไม่มีโต๊ะ (${u.length})`)+(u.map(g=>`<div class="g"><span>${esc(g.n)}</span><select onchange="asg(${g.id},this.value)" aria-label="เลือกโต๊ะให้ ${esc(g.n)}"><option value="">เลือกโต๊ะ…</option>${T.map(t=>`<option value="${t.id}">${esc(t.n)}</option>`).join('')}</select><button onclick="rm(${g.id})">ลบ</button></div>`).join('')||'<p class="mut">ทุกคนมีโต๊ะแล้ว 🎉</p>');return}
  const it=S.items.find(i=>i.id===sel);if(!it){P.className='';return}P.className='open';
@@ -330,7 +333,7 @@ async function syncLookup(){if(!DB||!EDIT)return;if(lkRun){lkAgain=true;return}l
   LK=want}while(lkAgain)}finally{lkRun=false}}
 async function gfind(){const v=document.getElementById('gq').value.trim(),m=document.getElementById('gm');if(!v)return;m.textContent='กำลังค้นหา…';
  try{const d=await DB.collection('lookup').doc(await sha(key(v))).get();const it=d.exists&&S.items.find(i=>i.id===d.data().tb);
-  if(it){HL=it.id;render();m.innerHTML=`โต๊ะของคุณ: <b>${esc(it.n)}</b>`;document.getElementById('gq').blur();reveal(it)}
+  if(it){HL=it.id;sel=it.id;MYK=key(v);render();m.innerHTML=`โต๊ะของคุณ: <b>${esc(it.n)}</b>`;document.getElementById('gq').blur();reveal(it)}
   else{HL=null;render();m.textContent='ไม่พบชื่อนี้ ลองพิมพ์ชื่อ-นามสกุลให้ตรงกับบัตรเชิญ หรือสอบถามทีมต้อนรับ'}}
  catch(e){m.textContent='ค้นหาไม่สำเร็จ ลองใหม่อีกครั้ง'}}
 const lg=document.getElementById('lg');
@@ -407,7 +410,7 @@ try{LOCK=localStorage.getItem('wedLock')==='1'}catch(e){}lockUI();render();fitCo
  EDIT=ROLE==='admin';bc.toggle('ro',!EDIT);
  document.getElementById('lo').style.display=ROLE==='guest'?'none':'';
  if(ROLE==='guest'){bc.add('guest');S.items=[];S.guests=[];render();
-  DB.doc('layout/main').onSnapshot(s=>{if(s.exists){S.items=clone(s.data().items||[]);norm();render();fitContent()}},()=>{document.getElementById('gm').textContent='โหลดผังไม่สำเร็จ ลองรีเฟรชหน้า'});return}
+  DB.doc('layout/main').onSnapshot(s=>{if(s.exists){S.items=clone(s.data().items||[]);NAMES=s.data().names||{};norm();render();fitContent()}},()=>{document.getElementById('gm').textContent='โหลดผังไม่สำเร็จ ลองรีเฟรชหน้า'});return}
  try{const[l,g]=await Promise.all([DB.doc('layout/main').get(),DB.doc('guests/main').get()]);
   if(!l.exists&&EDIT){await DB.doc('layout/main').set({items:clone(S.items)});await DB.doc('guests/main').set(gP());lastL=canon({items:S.items});lastG=canon(gP())}
   else{if(l.exists){S.items=clone(l.data().items||[]);norm();lastL=canon({items:S.items})}
