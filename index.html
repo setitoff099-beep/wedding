@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ผังโต๊ะงานแต่ง</title>
+<style>
+:root{--bg:#faf6f1;--card:#fff;--ink:#3a2e2a;--mut:#8a7a72;--acc:#b5546b;--ok:#3f8f5f;--line:#e6dcd2;--grid:#efe6dc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1e1a19;--card:#2a2423;--ink:#f1e8e2;--mut:#a89a92;--acc:#e08aa0;--ok:#6cc58c;--line:#3d3432;--grid:#292221}}
+:root[data-theme="dark"]{--bg:#1e1a19;--card:#2a2423;--ink:#f1e8e2;--mut:#a89a92;--acc:#e08aa0;--ok:#6cc58c;--line:#3d3432;--grid:#292221}
+*{box-sizing:border-box}html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;height:100%;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:"Sarabun","Noto Sans Thai",system-ui,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line)}
+h1{font-size:18px;margin:0 8px 0 0}
+button{font:inherit;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.p{background:var(--acc);color:#fff;border-color:var(--acc)}
+.sum{margin-left:auto;color:var(--mut);font-size:14px}
+#wrap{flex:1;min-height:0;overflow:auto}#sz{position:relative}
+#cv{position:absolute;left:0;top:0;transform-origin:0 0;width:2400px;height:1600px;touch-action:none;cursor:grab;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px}
+.it{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:13px;user-select:none;touch-action:none;cursor:grab;border:2px solid var(--line);background:var(--card)}
+.it.sel{border-color:var(--acc);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 30%,transparent)}
+.it.tb{border-radius:10px;overflow:hidden}.it.tb.sel,.it.sel{overflow:visible}.rt{position:absolute;left:50%;top:-30px;margin-left:-10px;width:20px;height:20px;border-radius:50%;background:var(--card);border:2px solid var(--acc);cursor:grab;touch-action:none;text-align:center;line-height:16px;font-size:12px;color:var(--acc)}.rz{position:absolute;right:-9px;bottom:-9px;width:20px;height:20px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:nwse-resize;touch-action:none}
+.it.tb b{font-size:14px}.it.tb.full{border-color:var(--ok)}
+.it{z-index:1}.it.room{z-index:0;background:transparent;border:3px dashed var(--acc);border-radius:14px;align-items:flex-start;justify-content:flex-start;padding:6px 12px;font-weight:700;color:var(--acc)}.it.stage{border-radius:10px;background:var(--acc);color:#fff}
+.it.wc,.it.in,.it.out{border-radius:10px}
+.it.in{border-color:var(--ok)}.it.out{border-color:#c0623a}
+#panel{position:fixed;right:0;bottom:0;top:0;width:min(340px,100%);background:var(--card);border-left:1px solid var(--line);padding:14px;padding-top:calc(14px + env(safe-area-inset-top,0px));overflow:auto;transform:translateX(100%);transition:.2s;z-index:5}
+#panel.open{transform:none}
+#panel input[type=text]{font:inherit;width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.g{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.g.in span{color:var(--ok);text-decoration:line-through}.g span{flex:1}
+.g input{width:22px;height:22px;accent-color:var(--ok)}
+.row{display:flex;gap:6px;margin:10px 0}
+.mut{color:var(--mut);font-size:13px}
+#q{font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:200px}
+#res{display:none;position:absolute;top:110%;left:0;width:300px;max-height:60vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:10px;z-index:9;box-shadow:0 6px 20px #0004}
+.ri{display:flex;gap:8px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--line);cursor:pointer}.ri:hover{background:var(--bg)}.ri div{flex:1}
+.it.hit{border-color:#e0a030;box-shadow:0 0 0 4px #e0a03066;animation:pl 1s infinite alternate}@keyframes pl{to{box-shadow:0 0 0 9px #e0a03022}}
+#imp,#lg{display:none;position:fixed;inset:0;background:#0008;z-index:20;align-items:center;justify-content:center;padding:12px}
+#imp>div,#lg>div{background:var(--card);border-radius:12px;padding:16px;width:min(520px,100%)}
+#imp textarea{width:100%;height:170px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);margin:8px 0}
+select{font:inherit;max-width:130px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px}
+.row{flex-wrap:wrap}.ro .adm{display:none!important}.locked .lay{display:none!important}.locked .it,.ro .it{cursor:pointer}.sw{width:26px;height:26px;padding:0;border-radius:50%}
+#toast{display:none;position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:10px;z-index:30;max-width:90%;font-size:14px}
+#gv{display:none;padding:12px;border-bottom:1px solid var(--line)}.g #gv{display:block}.g header{display:none!important}
+#gq,#lp{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:min(320px,100%)}
+#gm{font-size:16px;min-height:22px}#gm b{color:var(--acc);font-size:20px}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script></head><body>
+<header><h1>💍 ผังโต๊ะงานแต่ง</h1>
+<span style="position:relative"><input type="text" id="q" placeholder="🔍 ค้นหาชื่อแขก" oninput="Q=this.value.trim().toLowerCase();render()"><div id="res"></div></span><button class="adm" onclick="openImp()">📥 นำเข้ารายชื่อ</button><button class="adm" id="unb" onclick="sel='un';render()">👥 ยังไม่มีโต๊ะ (0)</button><button class="adm" onclick="backup()">💾 สำรอง</button><button class="adm" onclick="document.getElementById('rf').click()">♻️ กู้คืน</button><button class="adm" onclick="exportCsv()">📊 CSV</button><button class="adm" id="lk" onclick="toggleLock()">🔓 ล็อคผัง</button><button class="adm lay" onclick="add('room')">+ ห้อง</button><button class="p adm lay" onclick="add('tb')">+ โต๊ะจีน</button>
+<button class="adm lay" onclick="add('stage')">+ เวที</button><button class="adm lay" onclick="add('wc')">+ ห้องน้ำ</button>
+<button class="adm lay" onclick="add('in')">+ ทางเข้า</button><button class="adm lay" onclick="add('out')">+ ทางออก</button>
+<button onclick="zoom(1/1.2)" aria-label="ซูมออก">−</button><span class="mut" id="zl" style="min-width:42px;text-align:center">100%</span><button onclick="zoom(1.2)" aria-label="ซูมเข้า">+</button><button onclick="fitContent()">พอดีจอ</button><button id="lo" onclick="logout()" style="display:none">ออกจากระบบ</button><span class="mut" id="st" style="font-size:13px"></span><span class="sum" id="sum"></span></header>
+<div id="gv"><b>💍 ค้นหาโต๊ะของคุณ</b>
+<div class="row"><input id="gq" placeholder="พิมพ์ชื่อ-นามสกุล" onkeydown="if(event.key==='Enter')gfind()"><button class="p" onclick="gfind()">ค้นหา</button></div>
+<div id="gm" class="mut"></div>
+<div class="row"><button onclick="zoom(1/1.2)">−</button><button onclick="zoom(1.2)">+</button><button onclick="fitContent()">พอดีจอ</button><button onclick="openLg()" style="font-size:12px;margin-left:auto">🔑 สำหรับทีมงาน</button></div></div>
+<div id="wrap"><div id="sz"><div id="cv"></div></div></div>
+<aside id="panel"></aside><div id="toast"></div><input type="file" id="rf" accept=".json" hidden onchange="restore(this.files[0]);this.value=''">
+<div id="lg"><div><b>เข้าสู่ระบบทีมงาน</b><p class="mut" style="margin:6px 0">ใส่รหัสผู้ดูแล หรือรหัสทีมต้อนรับ</p><input type="password" id="lp" onkeydown="if(event.key==='Enter')login()"><p class="mut" id="lgm" style="min-height:20px"></p><div class="row" style="justify-content:flex-end"><button onclick="closeLg()">ปิด</button><button class="p" onclick="login()">เข้าสู่ระบบ</button></div></div></div>
+<div id="imp"><div><b>นำเข้ารายชื่อแขก</b>
+<p class="mut" style="margin:6px 0">1 คนต่อบรรทัด: <b>ชื่อ, โต๊ะ</b> (ช่องโต๊ะเว้นว่างได้ เช่น "สมชาย, 3" หรือ "สมหญิง, โต๊ะ VIP") ถ้ายังไม่มีโต๊ะนั้นจะสร้างให้ใหม่ วางข้อความได้เลย หรือเลือกไฟล์ .csv / .xlsx</p>
+<input type="file" id="fi" accept=".csv,.txt,.xlsx,.xls" onchange="loadFile(this.files[0])">
+<textarea id="ta" placeholder="สมชาย ใจดี, 1&#10;สมหญิง รักเรียน, 1&#10;คุณลุงมี, 2" oninput="prev()"></textarea>
+<p class="mut" id="im" style="min-height:20px;margin:0 0 8px"></p>
+<div class="row" style="justify-content:flex-end"><button onclick="closeImp()">ปิด</button><button class="p" onclick="doImport()">นำเข้า</button></div></div></div>
+<script>
+// ===== ตั้งค่า Firebase (ดูวิธีใน SETUP-TH.md) =====
+const FB_CONFIG={apiKey:"วางค่า apiKey ตรงนี้",authDomain:"wedding-project-4321a.firebaseapp.com",projectId:"wedding-project-4321a",appId:"วางค่า appId ตรงนี้"};
+const ADMIN_EMAIL="admin@wedding-seating.app",STAFF_EMAIL="staff@wedding-seating.app";
+const L={room:'ห้อง',tb:'โต๊ะ',stage:'เวที',wc:'ห้องน้ำ 🚻',in:'ทางเข้า ➡️',out:'ทางออก ⬅️'};
+let S={items:[{id:1,t:'stage',x:400,y:30,n:'เวที'},{id:2,t:'in',x:30,y:620,n:'ทางเข้า'},{id:3,t:'out',x:980,y:620,n:'ทางออก'},{id:4,t:'wc',x:980,y:30,n:'ห้องน้ำ'},
+{id:5,t:'tb',x:300,y:200,n:'โต๊ะ 1'},{id:6,t:'tb',x:520,y:200,n:'โต๊ะ 2'},{id:7,t:'tb',x:740,y:200,n:'โต๊ะ 3'}],guests:[],next:20};
+try{const r=localStorage.getItem('wed');if(r)S=JSON.parse(r)}catch(e){}
+const CW=2400,CH=1600,PAL=['#e8789a','#f0a04b','#e6cc3c','#5bb56f','#4aa3d6','#8b7be0','#9aa0a6','#ffffff'];
+let LOCK=false,ROLE='admin',HL=null,DB=null,C=null,EDIT=true,busy=false,tm=0,pushing=false,lastL='',lastG='',CK=new Set();
+const nid=(()=>{let c=0;return()=>Date.now()*1000+(c++%1000)})();
+const canon=o=>JSON.stringify(o,(k,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.entries(v).sort()):v);
+const gP=()=>({list:S.guests.filter(g=>!g.w).map(g=>({id:g.id,n:g.n,tb:g.tb||null}))}),clone=o=>JSON.parse(JSON.stringify(o)),rr=()=>{if(!busy)render()};
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',5000)}
+function stat(){document.getElementById('st').textContent=DB?(ROLE==='admin'?'🟢 ผู้ดูแล · ซิงค์ทุกเครื่อง':'🟢 ทีมต้อนรับ'):'⚪ ใช้ในเครื่องนี้'}
+function norm(){S.items.forEach(i=>{const d=DEF[i.t]||[80,80];i.w=i.w||d[0];i.h=i.h||d[1]})}
+function sync(){if(!DB){save();return}if(!EDIT)return;if(canon({items:S.items})!==lastL||canon(gP())!==lastG){clearTimeout(tm);tm=setTimeout(push,400)}}
+async function push(){if(pushing){tm=setTimeout(push,300);return}tm=0;pushing=true;const a=canon({items:S.items}),b=canon(gP());
+ try{if(a!==lastL){await DB.doc('layout/main').set({items:clone(S.items)});lastL=a}if(b!==lastG){await DB.doc('guests/main').set(gP());lastG=b;syncLookup().catch(()=>toast('อัปเดตตัวค้นหาของแขกไม่สำเร็จ'))}}catch(e){toast('บันทึกขึ้นระบบไม่สำเร็จ ('+(e.code||'error')+')')}pushing=false}
+function applyRemote(k,d){if(busy||tm||pushing)return;
+ if(k==='L'){const a=canon({items:d.items||[]});if(a===lastL)return;S.items=clone(d.items||[]);norm();lastL=a}
+ else{const b=canon({list:d.list||[]});if(b===lastG)return;S.guests=clone(d.list||[]).map(g=>({...g,in:CK.has(String(g.id))})).concat(S.guests.filter(g=>g.w));lastG=canon(gP())}}
+const DEF={room:[880,600],tb:[80,80],stage:[320,80],wc:[80,40],in:[80,40],out:[80,40]},G=40,sn=v=>Math.round(v/G)*G;
+S.items.forEach(i=>{i.w=i.w||DEF[i.t][0];i.h=i.h||DEF[i.t][1];i.x=sn(i.x);i.y=sn(i.y)});
+let sel=null,Q='';const cv=document.getElementById('cv'),P=document.getElementById('panel');
+const save=()=>{try{localStorage.setItem('wed',JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function render(){
+ cv.innerHTML='';const hs=new Set(Q?S.guests.filter(g=>g.n.toLowerCase().includes(Q)).map(g=>g.tb):[]);
+ S.items.forEach(it=>{
+  const d=document.createElement('div');d.className='it '+it.t+(it.id===sel?' sel':'');
+  d.style.left=it.x+'px';d.style.top=it.y+'px';d.style.width=it.w+'px';d.style.height=it.h+'px';d.style.transform=it.r?`rotate(${it.r}deg)`:'';d.dataset.id=it.id;
+  if(it.t==='tb'){const g=S.guests.filter(x=>x.tb===it.id),k=g.filter(x=>x.in).length;
+   if(g.length&&k===g.length)d.classList.add('full');if(hs.has(it.id)||it.id===HL)d.classList.add('hit');
+   d.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;transform:rotate(${-(it.r||0)}deg)"><b>${esc(it.n)}</b>${ROLE==='guest'?'':`<span>${k}/${g.length} คน</span>`}</div>`}
+  else d.textContent=it.n;
+  if(it.c&&/^#[0-9a-f]{3,8}$/i.test(it.c)){if(it.t==='room'){d.style.borderColor=it.c;d.style.color=it.c;d.style.background=`color-mix(in srgb,${it.c} 8%,transparent)`}else{d.style.background=`color-mix(in srgb,${it.c} 40%,var(--card))`;d.style.color='var(--ink)';if(!/sel|full|hit/.test(d.className))d.style.borderColor=it.c}}
+  if(it.id===sel&&EDIT&&!LOCK){const z=document.createElement('div');z.className='rz';z.title='ลากเพื่อปรับขนาด';rz(z,it,d);d.appendChild(z);const t=document.createElement('div');t.className='rt';t.textContent='↻';t.title='ลากเพื่อหมุน';rt(t,it,d);d.appendChild(t)}
+  drag(d,it);cv.appendChild(d)});
+ const a=S.guests.length,b=S.guests.filter(x=>x.in).length;
+ document.getElementById('sum').textContent=`เช็คอินแล้ว ${b}/${a} คน`;
+ document.getElementById('unb').textContent=`👥 ยังไม่มีโต๊ะ (${S.guests.filter(g=>!g.tb).length})`;res();panel();sync()}
+function drag(d,it){
+ d.onpointerdown=e=>{busy=true;d.setPointerCapture(e.pointerId);const sx=e.clientX,sy=e.clientY,ox=it.x,oy=it.y;let mv=false;const car=it.t==='room'?S.items.filter(o=>o!==it&&o.x>=it.x&&o.y>=it.y&&o.x+o.w<=it.x+it.w&&o.y+o.h<=it.y+it.h).map(o=>[o,o.x,o.y]):[];
+  d.onpointermove=e=>{if(!EDIT||LOCK)return;const dx=(e.clientX-sx)/K,dy=(e.clientY-sy)/K;if(!mv&&Math.hypot(dx,dy)*K<5)return;mv=true;
+   it.x=Math.max(0,Math.min(CW-it.w,sn(ox+dx)));it.y=Math.max(0,Math.min(CH-it.h,sn(oy+dy)));
+   d.style.left=it.x+'px';d.style.top=it.y+'px';car.forEach(([o,x,y])=>{o.x=x+it.x-ox;o.y=y+it.y-oy;const e=cv.querySelector(`[data-id="${o.id}"]`);e.style.left=o.x+'px';e.style.top=o.y+'px'})};
+  d.onpointerup=()=>{busy=false;d.onpointermove=d.onpointerup=null;if(!mv){sel=it.id}save();render()}}}
+function asg(id,v){if(!v)return;S.guests.find(x=>x.id===id).tb=+v;render()}
+function res(){const R=document.getElementById('res');if(!Q){R.style.display='none';return}
+ const m=S.guests.filter(g=>g.n.toLowerCase().includes(Q)).slice(0,30);R.style.display='block';
+ R.innerHTML=m.map(g=>{const t=S.items.find(i=>i.id===g.tb);return `<div class="ri" onclick="goTo(${g.id})"><div><b>${esc(g.n)}</b><br><span class="mut">${t?esc(t.n):'ยังไม่มีโต๊ะ'}</span></div><button onclick="event.stopPropagation();ck(${g.id})">${g.in?'✓ มาแล้ว':'เช็คอิน'}</button></div>`}).join('')||'<div class="ri mut">ไม่พบชื่อนี้ — กดที่โต๊ะแล้วเพิ่มแขก walk-in ได้</div>'}
+function goTo(id){const g=S.guests.find(x=>x.id===id),it=g&&S.items.find(i=>i.id===g.tb);Q='';document.getElementById('q').value='';
+ if(!it){sel='un';render();return}sel=it.id;render();wrap.scrollLeft=(it.x+it.w/2)*K-wrap.clientWidth/2;wrap.scrollTop=(it.y+it.h/2)*K-wrap.clientHeight/2}
+const nz=x=>String(x).toLowerCase().replace(/\s+/g,'');
+function sp(l){if(l.includes('\t'))return l.split('\t');const o=[];let c='',q=false;for(const ch of l){if(ch==='"')q=!q;else if((ch===','||ch===';')&&!q){o.push(c);c=''}else c+=ch}o.push(c);return o}
+function parse(t){const rows=t.replace(/^\uFEFF/,'').split(/\r?\n/).map(l=>sp(l).map(x=>String(x).trim())).filter(r=>r[0]);
+ if(rows.length&&/^(ชื่อ|name|guest|แขก|รายชื่อ)/i.test(rows[0][0]))rows.shift();return rows}
+const ta=document.getElementById('ta'),im=document.getElementById('im');
+function prev(){const n=parse(ta.value).length;im.textContent=n?`พบ ${n} คน พร้อมนำเข้า`:''}
+function openImp(){document.getElementById('imp').style.display='flex'}
+function closeImp(){document.getElementById('imp').style.display='none'}
+async function loadFile(f){if(!f)return;
+ if(/\.xlsx?$/i.test(f.name)){if(typeof XLSX==='undefined'){im.textContent='โหลดตัวอ่าน Excel ไม่ได้ (ต้องต่ออินเทอร์เน็ต) ให้บันทึกเป็น CSV แล้วลองใหม่';return}
+  const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});ta.value=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,blankrows:false}).map(r=>[r[0]??'',r[1]??''].join('\t')).join('\n')}
+ else{const b=await f.arrayBuffer();try{ta.value=new TextDecoder('utf-8',{fatal:true}).decode(b)}catch(e){ta.value=new TextDecoder('windows-874').decode(b)}}
+ prev()}
+function freeSpot(){for(let y=120;y<CH-120;y+=160)for(let x=120;x<CW-120;x+=160)if(!S.items.some(i=>i.t==='tb'&&Math.abs(i.x-x)<120&&Math.abs(i.y-y)<120))return[x,y];return[80,80]}
+function doImport(){const rows=parse(ta.value);if(!rows.length){im.textContent='ยังไม่มีรายชื่อให้นำเข้า';return}
+ let made=0,none=0,added=0;const skip=[];
+ rows.forEach(([n,t])=>{if(S.guests.some(g=>nz(g.n)===nz(n))){skip.push(n);return}added++;let id=null;if(t){let m=S.items.find(i=>i.t==='tb'&&[nz(t),nz('โต๊ะ'+t),nz('table'+t)].includes(nz(i.n)));
+  if(!m){const[x,y]=freeSpot();m={id:nid(),t:'tb',x,y,w:80,h:80,n:/^\d+$/.test(t)?'โต๊ะ '+t:t};S.items.push(m);made++}id=m.id}else none++;
+  S.guests.push({id:nid(),n,tb:id,in:false})});
+ ta.value='';im.textContent=`นำเข้า ${added} คนแล้ว · สร้างโต๊ะใหม่ ${made} โต๊ะ · ยังไม่มีโต๊ะ ${none} คน`+(skip.length?` · ข้ามชื่อซ้ำ ${skip.length} คน: ${skip.slice(0,5).join(', ')}${skip.length>5?' …':''}`:'');render();if(made)fitContent()}
+function rz(z,it,d){z.onpointerdown=e=>{busy=true;e.stopPropagation();z.setPointerCapture(e.pointerId);const sx=e.clientX,sy=e.clientY,w0=it.w,h0=it.h,a=(it.r||0)*Math.PI/180,lx=e=>((e.clientX-sx)*Math.cos(a)+(e.clientY-sy)*Math.sin(a))/K,ly=e=>(-(e.clientX-sx)*Math.sin(a)+(e.clientY-sy)*Math.cos(a))/K;
+ z.onpointermove=e=>{it.w=Math.max(G,Math.min(CW-it.x,sn(w0+lx(e))));it.h=Math.max(G,Math.min(CH-it.y,sn(h0+ly(e))));d.style.width=it.w+'px';d.style.height=it.h+'px'};
+ z.onpointerup=()=>{busy=false;z.onpointermove=z.onpointerup=null;render()}}}
+function rt(t,it,d){t.onpointerdown=e=>{busy=true;e.stopPropagation();t.setPointerCapture(e.pointerId);
+ t.onpointermove=e=>{const b=d.getBoundingClientRect(),a=Math.atan2(e.clientY-(b.top+b.height/2),e.clientX-(b.left+b.width/2))*180/Math.PI+90;it.r=((Math.round(a/15)*15)%360+360)%360;d.style.transform=`rotate(${it.r}deg)`};
+ t.onpointerup=()=>{busy=false;t.onpointermove=t.onpointerup=null;render()}}}
+function rot(d){const it=S.items.find(i=>i.id===sel);it.r=(((it.r||0)+d)%360+360)%360;render()}
+function sz(dw,dh){const it=S.items.find(i=>i.id===sel);it.w=Math.max(G,Math.min(CW-it.x,it.w+dw*G));it.h=Math.max(G,Math.min(CH-it.y,it.h+dh*G));render()}
+function add(t){const n=S.items.filter(i=>i.t===t).length+1;
+ S.items.push({id:nid(),t,x:sn(wrap.scrollLeft/K+80+Math.random()*120),y:sn(wrap.scrollTop/K+80+Math.random()*120),w:DEF[t][0],h:DEF[t][1],n:t==='tb'?'โต๊ะ '+n:L[t].split(' ')[0]});sel=S.items[S.items.length-1].id;render()}
+function panel(){
+ if(ROLE==='guest'){P.className='';return}if(sel==='un'){const u=S.guests.filter(g=>!g.tb),T=S.items.filter(i=>i.t==='tb');P.className='open';
+  P.innerHTML=`<div class="row"><b style="flex:1">แขกที่ยังไม่มีโต๊ะ (${u.length})</b><button onclick="sel=null;render()">✕ ปิด</button></div>`+(u.map(g=>`<div class="g"><span>${esc(g.n)}</span><select onchange="asg(${g.id},this.value)"><option value="">เลือกโต๊ะ…</option>${T.map(t=>`<option value="${t.id}">${esc(t.n)}</option>`).join('')}</select><button onclick="rm(${g.id})">ลบ</button></div>`).join('')||'<p class="mut">ทุกคนมีโต๊ะแล้ว 🎉</p>');return}
+ const it=S.items.find(i=>i.id===sel);if(!it){P.className='';return}P.className='open';
+ let h=`<div class="row"><b style="flex:1">${L[it.t]}</b><button onclick="sel=null;render()">✕ ปิด</button></div>
+ <input type="text" id="rn" value="${esc(it.n)}" onchange="ren(this.value)" aria-label="ชื่อ" ${EDIT&&!LOCK?'':'readonly'}>`;
+ if(EDIT&&!LOCK)h+=`<div class="row"><span class="mut" style="flex:1">กว้าง</span><button onclick="sz(-1,0)">−</button><button onclick="sz(1,0)">+</button><span class="mut" style="flex:1;text-align:right">สูง</span><button onclick="sz(0,-1)">−</button><button onclick="sz(0,1)">+</button></div>`;
+ if(EDIT&&!LOCK)h+=`<div class="row"><span class="mut" style="flex:1">หมุน (${it.r||0}°)</span><button onclick="rot(-15)">↺ 15°</button><button onclick="rot(15)">↻ 15°</button><button onclick="rot(90)">90°</button></div>`;
+ if(EDIT&&!LOCK)h+=`<div class="row"><span class="mut" style="flex:1">สี</span>${PAL.map(c=>`<button class="sw" style="background:${c}" onclick="setc('${c}')" aria-label="สี"></button>`).join('')}<input type="color" value="${/^#[0-9a-f]{6}$/i.test(it.c||'')?it.c:'#e8789a'}" onchange="setc(this.value)" title="เลือกสีเอง"><button onclick="setc('')">รีเซ็ต</button></div>`;
+ if(it.t==='tb'){const g=S.guests.filter(x=>x.tb===it.id);
+  h+=`<p class="mut">แขก ${g.length} คน · มาแล้ว ${g.filter(x=>x.in).length} คน</p>`;
+  h+=g.map(x=>`<div class="g ${x.in?'in':''}"><input type="checkbox" ${x.in?'checked':''} onchange="ck(${x.id})" aria-label="เช็คอิน"><span>${esc(x.n)}${x.w?' <small class="mut">walk-in</small>':''}</span>${EDIT?`<button onclick="rm(${x.id})">ลบ</button>`:''}</div>`).join('')||'<p class="mut">ยังไม่มีแขกที่โต๊ะนี้</p>';
+  h+=`<div class="row"><input type="text" id="gn" placeholder="${EDIT?'ชื่อแขก (เพิ่มหลายคนคั่นด้วยคอมมา)':'เพิ่มแขก walk-in (เช็คอินให้เลย)'}" onkeydown="if(event.key==='Enter')ag()"><button class="p" onclick="ag()">เพิ่ม</button></div>`}
+ if(EDIT&&!LOCK)h+=`<div class="row"><button onclick="del()" style="color:#c0392b">🗑 ลบ${it.t==='tb'?'โต๊ะนี้ (รวมแขก)':'สิ่งนี้'}</button></div>`;
+ const ae=document.activeElement,keep=P.contains(ae)&&ae.id?{id:ae.id,v:ae.value}:null;P.innerHTML=h;if(keep){const e=document.getElementById(keep.id);if(e){e.value=keep.v;e.focus()}}}
+function ren(v){S.items.find(i=>i.id===sel).n=v||'-';render()}
+function ck(id){const g=S.guests.find(x=>x.id===id);g.in=!g.in;render();
+ if(DB){const d=C.doc(String(id));(g.in?d.set({t:Date.now()}):d.delete()).catch(()=>{g.in=!g.in;render();toast('เช็คอินไม่สำเร็จ — ตรวจสอบว่าเข้าสู่ระบบทีมงานแล้ว และต่อเน็ตอยู่')})}}
+function setc(c){const it=S.items.find(i=>i.id===sel);if(c)it.c=c;else delete it.c;render()}
+function rm(id){const g=S.guests.find(x=>x.id===id);S.guests=S.guests.filter(x=>x.id!==id);if(DB){C.doc(String(id)).delete().catch(()=>0);if(g&&g.w)DB.collection('walkins').doc(String(id)).delete().catch(()=>0)}render()}
+function walkin(n){const id=nid(),tb=sel;S.guests.push({id,n,tb,in:true,w:true});
+ Promise.all([DB.collection('walkins').doc(String(id)).set({n,tb}),C.doc(String(id)).set({t:Date.now()})]).catch(()=>{S.guests=S.guests.filter(g=>g.id!==id);rr();toast('เพิ่มแขก walk-in ไม่สำเร็จ — ตรวจสอบว่าเข้าสู่ระบบทีมงานแล้ว และต่อเน็ตอยู่')})}
+const key=n=>nz(n).replace(/^(นางสาว|นาย|นาง|น\.ส\.|คุณ|ดร\.|mr\.?|mrs\.?|ms\.?|dr\.?)/,'');
+async function sha(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+let LK=null,lkRun=false,lkAgain=false;
+async function syncLookup(){if(!DB||!EDIT)return;if(lkRun){lkAgain=true;return}lkRun=true;
+ try{do{lkAgain=false;if(!LK){LK=new Map();(await DB.collection('lookup').get()).forEach(d=>LK.set(d.id,d.data().tb))}
+  const want=new Map();for(const g of S.guests){if(g.w||!g.tb)continue;want.set(await sha(key(g.n)),g.tb)}
+  const ops=[];want.forEach((tb,k)=>{if(LK.get(k)!==tb)ops.push([1,k,tb])});LK.forEach((tb,k)=>{if(!want.has(k))ops.push([0,k])});
+  for(let i=0;i<ops.length;i+=400){const b=DB.batch();ops.slice(i,i+400).forEach(([s,k,tb])=>s?b.set(DB.collection('lookup').doc(k),{tb}):b.delete(DB.collection('lookup').doc(k)));await b.commit()}
+  LK=want}while(lkAgain)}finally{lkRun=false}}
+async function gfind(){const v=document.getElementById('gq').value.trim(),m=document.getElementById('gm');if(!v)return;m.textContent='กำลังค้นหา…';
+ try{const d=await DB.collection('lookup').doc(await sha(key(v))).get();const it=d.exists&&S.items.find(i=>i.id===d.data().tb);
+  if(it){HL=it.id;render();fitContent();m.innerHTML=`โต๊ะของคุณ: <b>${esc(it.n)}</b>`}
+  else{HL=null;render();m.textContent='ไม่พบชื่อนี้ ลองพิมพ์ชื่อ-นามสกุลให้ตรงกับบัตรเชิญ หรือสอบถามทีมต้อนรับ'}}
+ catch(e){m.textContent='ค้นหาไม่สำเร็จ ลองใหม่อีกครั้ง'}}
+const lg=document.getElementById('lg');
+function openLg(){lg.style.display='flex';document.getElementById('lp').focus()}
+function closeLg(){lg.style.display='none'}
+async function login(){const pw=document.getElementById('lp').value,m=document.getElementById('lgm');if(!pw)return;m.textContent='กำลังตรวจสอบ…';
+ for(const em of[ADMIN_EMAIL,STAFF_EMAIL]){try{await firebase.auth().signInWithEmailAndPassword(em,pw);location.reload();return}catch(e){}}
+ m.textContent='รหัสไม่ถูกต้อง'}
+function logout(){firebase.auth().signOut().then(()=>location.reload())}
+function dl(t,type,name){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000)}
+function backup(){dl(JSON.stringify({v:1,items:S.items,guests:S.guests.filter(g=>!g.w).map(g=>({id:g.id,n:g.n,tb:g.tb||null}))},null,1),'application/json','wedding-backup-'+new Date().toISOString().slice(0,10)+'.json')}
+function restore(f){if(!f)return;f.text().then(t=>{try{const d=JSON.parse(t);if(!Array.isArray(d.items)||!Array.isArray(d.guests))throw 0;if(!confirm('กู้คืนจะแทนที่ผังและรายชื่อปัจจุบันทั้งหมด ดำเนินการต่อ?'))return;
+ S.items=d.items;norm();S.guests=d.guests.map(g=>({id:g.id,n:String(g.n),tb:g.tb||null,in:CK.has(String(g.id))})).concat(S.guests.filter(g=>g.w));sel=null;render();toast('กู้คืนแล้ว')}catch(e){toast('ไฟล์สำรองไม่ถูกต้อง')}})}
+function exportCsv(){const q=v=>{v=String(v);if(/^[=+\-@]/.test(v))v="'"+v;return'"'+v.replace(/"/g,'""')+'"'};
+ const rows=[['ชื่อ','โต๊ะ','เช็คอิน','walk-in'],...S.guests.map(g=>{const t=S.items.find(i=>i.id===g.tb);return[g.n,t?t.n:'',g.in?'มาแล้ว':'',g.w?'ใช่':'']})];
+ dl('\uFEFF'+rows.map(r=>r.map(q).join(',')).join('\r\n'),'text/csv','wedding-guests.csv')}
+function lockUI(){document.body.classList.toggle('locked',LOCK);document.getElementById('lk').textContent=LOCK?'🔒 ผังล็อคอยู่':'🔓 ล็อคผัง'}
+function toggleLock(){LOCK=!LOCK;try{localStorage.setItem('wedLock',LOCK?'1':'0')}catch(e){}lockUI();render()}
+function ag(){const v=document.getElementById('gn').value,dup=[];v.split(/[,،\n]/).map(s=>s.trim()).filter(Boolean).forEach(n=>{const o=S.guests.find(g=>nz(g.n)===nz(n));if(o){const t=S.items.find(i=>i.id===o.tb);dup.push(`${n} (อยู่${t?t.n:'รายการยังไม่มีโต๊ะ'})`)}else if(EDIT||!DB)S.guests.push({id:nid(),n,tb:sel,in:false});else walkin(n)});
+ if(dup.length)toast('ชื่อซ้ำ ไม่ได้เพิ่ม: '+dup.join(', '));render();document.getElementById('gn').focus()}
+function del(){if(!confirm('ลบรายการนี้?'))return;if(DB)S.guests.filter(g=>g.w&&g.tb===sel).forEach(g=>DB.collection('walkins').doc(String(g.id)).delete().catch(()=>0));S.items=S.items.filter(i=>i.id!==sel);S.guests=S.guests.filter(g=>g.tb!==sel);sel=null;render()}
+let K=1;const wrap=document.getElementById('wrap'),sz_=document.getElementById('sz');
+function apply(){cv.style.transform=`scale(${K})`;sz_.style.width=CW*K+'px';sz_.style.height=CH*K+'px';document.getElementById('zl').textContent=Math.round(K*100)+'%'}
+function zoom(f){const cx=(wrap.scrollLeft+wrap.clientWidth/2)/K,cy=(wrap.scrollTop+wrap.clientHeight/2)/K;K=Math.max(.2,Math.min(2.5,K*f));apply();wrap.scrollLeft=cx*K-wrap.clientWidth/2;wrap.scrollTop=cy*K-wrap.clientHeight/2}
+function fitContent(){const I=S.items;if(!I.length){K=1;apply();return}const bx=Math.max(0,Math.min(...I.map(i=>i.x))-40),by=Math.max(0,Math.min(...I.map(i=>i.y))-40),bw=Math.max(...I.map(i=>i.x+i.w))+40-bx,bh=Math.max(...I.map(i=>i.y+i.h))+40-by;
+ K=Math.max(.2,Math.min(wrap.clientWidth/bw,wrap.clientHeight/bh,1.5));apply();wrap.scrollLeft=bx*K-(wrap.clientWidth-bw*K)/2;wrap.scrollTop=by*K-(wrap.clientHeight-bh*K)/2}
+wrap.addEventListener('wheel',e=>{if(e.ctrlKey){e.preventDefault();zoom(e.deltaY<0?1.1:1/1.1)}},{passive:false});
+cv.addEventListener('pointerdown',e=>{if(e.target!==cv)return;const sx=e.clientX,sy=e.clientY,l=wrap.scrollLeft,t=wrap.scrollTop;let mv=false;cv.setPointerCapture(e.pointerId);
+ cv.onpointermove=e=>{if(Math.hypot(e.clientX-sx,e.clientY-sy)>4)mv=true;wrap.scrollLeft=l-(e.clientX-sx);wrap.scrollTop=t-(e.clientY-sy)};
+ cv.onpointerup=()=>{cv.onpointermove=cv.onpointerup=null;if(!mv&&sel){sel=null;render()}}});
+apply();
+try{LOCK=localStorage.getItem('wedLock')==='1'}catch(e){}lockUI();render();fitContent();
+(async()=>{
+ const bc=document.body.classList;
+ if(typeof firebase==='undefined'||!FB_CONFIG.projectId){stat();return}
+ firebase.initializeApp(FB_CONFIG);DB=firebase.firestore();
+ try{await DB.enablePersistence({synchronizeTabs:true})}catch(e){}
+ C=DB.collection('checkins');
+ const u=await new Promise(res=>{const off=firebase.auth().onAuthStateChanged(x=>{off();res(x)})});
+ ROLE=u&&u.email===ADMIN_EMAIL?'admin':u&&u.email===STAFF_EMAIL?'staff':'guest';
+ EDIT=ROLE==='admin';bc.toggle('ro',!EDIT);
+ document.getElementById('lo').style.display=ROLE==='guest'?'none':'';
+ if(ROLE==='guest'){bc.add('g');S.items=[];S.guests=[];render();
+  DB.doc('layout/main').onSnapshot(s=>{if(s.exists){S.items=clone(s.data().items||[]);norm();render();fitContent()}},()=>{document.getElementById('gm').textContent='โหลดผังไม่สำเร็จ ลองรีเฟรชหน้า'});return}
+ try{const[l,g]=await Promise.all([DB.doc('layout/main').get(),DB.doc('guests/main').get()]);
+  if(!l.exists&&EDIT){await DB.doc('layout/main').set({items:clone(S.items)});await DB.doc('guests/main').set(gP());lastL=canon({items:S.items});lastG=canon(gP())}
+  else{if(l.exists){S.items=clone(l.data().items||[]);norm();lastL=canon({items:S.items})}
+   if(g.exists){S.guests=clone(g.data().list||[]);lastG=canon(gP())}S.guests.forEach(x=>x.in=false)}
+ }catch(e){toast('เชื่อมต่อฐานข้อมูลไม่สำเร็จ ('+(e.code||'error')+')')}
+ DB.doc('layout/main').onSnapshot(s=>{if(s.exists&&!s.metadata.hasPendingWrites){applyRemote('L',s.data());rr()}},()=>toast('การซิงค์ผังหยุดทำงาน ลองรีเฟรชหน้า'));
+ DB.doc('guests/main').onSnapshot(s=>{if(s.exists&&!s.metadata.hasPendingWrites){applyRemote('G',s.data());rr()}},()=>toast('การซิงค์รายชื่อหยุดทำงาน ลองรีเฟรชหน้า'));
+ C.onSnapshot(s=>{CK=new Set(s.docs.map(d=>d.id));S.guests.forEach(g=>g.in=CK.has(String(g.id)));rr()},()=>toast('การซิงค์เช็คอินหยุดทำงาน ลองรีเฟรชหน้า'));
+ DB.collection('walkins').onSnapshot(s=>{const w=s.docs.map(d=>{const x=d.data();return{id:+d.id,n:String(x.n||''),tb:x.tb??null,w:true,in:CK.has(d.id)}});S.guests=S.guests.filter(g=>!g.w).concat(w);rr()},()=>toast('การซิงค์แขก walk-in หยุดทำงาน ลองรีเฟรชหน้า'));
+ stat();render();fitContent();
+ if(EDIT)syncLookup().catch(()=>toast('อัปเดตตัวค้นหาของแขกไม่สำเร็จ'));
+})();
+</script></body></html>
